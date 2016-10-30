@@ -3,9 +3,38 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+
   </head>
-  <body>
+  <body onload = "getLocation()">
+
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+    <p id="location">unedited</p>
   </body>
+  <script>
+
+  var x = document.getElementById("location");
+      function getLocation(){
+          if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(showPosition);
+              console.log("inside get location");
+
+          } else {
+              x.innerHTML = "Geolocation is not supported by this browser.";
+          }
+      }
+      function showPosition(position) {
+        console.log("inside show position" );
+          x.innerHTML = "Latitude: " + position.coords.latitude +
+          "<br>Longitude: " + position.coords.longitude;
+          var myHeaders = new Headers();
+          myHeaders.append("Content-Type", "application/json");
+
+          fetch("/location", {
+            headers: myHeaders,
+          method: "POST",
+          body: JSON.stringify({lat: position.coords.latitude, long: position.coords.longitude})
+        });
+      }
+    </script>
 </html>
